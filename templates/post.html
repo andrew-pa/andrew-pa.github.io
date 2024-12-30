@@ -14,7 +14,7 @@
         <em>Published on {{ post.pub_date_str }}</em>
         <p class="tags">
           {% for tag in post.tags %}
-            <a href="/tags/{{ tag|lower }}.html">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+            <a href="/tags/{{ tag|slugify }}.html">{{ tag }}</a>
           {% endfor %}
         </p>
     </div>
@@ -26,7 +26,7 @@
     </div>
 
     <div class="share-links">
-      Share:
+      Share this post:
       <a href="https://x.com/share?url={{ public_url }}&text={{ post.title }}">X</a> |
       <a href="https://linkedin.com/sharing/share-offsite/?url={{ public_url }}">LinkedIn</a>
     </div>

@@ -190,11 +190,15 @@ def setup_jinja_env(templates_dir: str = "templates") -> Environment:
     Setup Jinja2 environment to load templates from the specified directory.
     """
     env = Environment(loader=FileSystemLoader(templates_dir))
+    env.filters["slugify"] = slugify
     return env
 
 
 def render_home_page(
-    env: Environment, config: Dict[str, Any], all_posts: List[BlogPost]
+    env: Environment,
+    config: Dict[str, Any],
+    all_posts: List[BlogPost],
+    all_tags: List[str],
 ) -> None:
     """
     Render the home page (index.html) listing recent posts.
@@ -204,7 +208,10 @@ def render_home_page(
     recent_posts = all_posts[: config["recent_posts_limit"]]
 
     rendered: str = template.render(
-        config=config, page_title=f"{config['site_title']} - Home", posts=recent_posts
+        config=config,
+        page_title=f"{config['site_title']} - Home",
+        posts=recent_posts,
+        tags=all_tags,
     )
     with open("output/index.html", "w", encoding="utf-8") as f:
         f.write(rendered)
@@ -236,20 +243,17 @@ def render_archive_page(
 
 
 def render_tag_pages(
-    env: Environment, config: Dict[str, Any], all_posts: List[BlogPost]
+    env: Environment,
+    config: Dict[str, Any],
+    all_posts_by_tag: Dict[str, List[BlogPost]],
 ) -> None:
     """
     Render a page for each unique tag, listing the relevant posts.
     """
     print("Rendering tag pages")
     template = env.get_template("tag.html")
-    tag_dict: Dict[str, List[BlogPost]] = {}
 
-    for post in all_posts:
-        for tag in post.tags:
-            tag_dict.setdefault(tag, []).append(post)
-
-    for tag, posts_with_tag in tag_dict.items():
+    for tag, posts_with_tag in all_posts_by_tag.items():
         tag_slug = slugify(tag)
         output_path = os.path.join("output", "tags", f"{tag_slug}.html")
 
@@ -405,14 +409,19 @@ def main() -> None:
 
     # 2. Load all posts
     all_posts = load_all_posts("posts")
+    all_posts_by_tag: Dict[str, List[BlogPost]] = {}
+
+    for post in all_posts:
+        for tag in post.tags:
+            all_posts_by_tag.setdefault(tag, []).append(post)
 
     # 3. Setup Jinja environment
     env = setup_jinja_env("templates")
 
     # 4. Render pages
-    render_home_page(env, config, all_posts)
+    render_home_page(env, config, all_posts, list(all_posts_by_tag.keys()))
     render_archive_page(env, config, all_posts)
-    render_tag_pages(env, config, all_posts)
+    render_tag_pages(env, config, all_posts_by_tag)
     render_individual_posts(env, config, all_posts)
 
     # 5. Copy and optimize public assets

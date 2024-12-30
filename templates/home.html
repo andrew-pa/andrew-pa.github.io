@@ -8,13 +8,12 @@
       {{ post_item(post) }}
   {% endfor %}
   </ul>
-  <div class="tags">
-    <h2>Tags</h2>
-    <ul>
+
+    <h2>Posts By Tag</h2>
+    <div class="all-tag-list tags">
       {% for tag in tags %}
-        <li><a href="{{ config.base_url }}/tags/{{ tag|slugify }}.html">{{ tag }}</a></li>
+        <a href="/tags/{{ tag|slugify }}.html">{{ tag }}</a>
       {% endfor %}
-    </ul>
-  </div>
+    </div>
 {% endblock %}
 

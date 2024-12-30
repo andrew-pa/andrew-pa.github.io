@@ -53,6 +53,11 @@ header {
     align-items: baseline;
 }
 
+header h1 {
+    margin: 0;
+    font-size: x-large;
+}
+
 header nav {
     margin-left: 2rem;
     display: flex;
@@ -81,4 +86,20 @@ header a:hover {
 
 article {
     margin: 2rem;
+}
+
+article h1 {
+    font-size: xx-large;
+    margin: 0;
+}
+
+.all-tag-list {
+    margin: 1rem;
+}
+
+.tags a {
+    margin: 0.25rem;
+    padding: 0.25rem;
+    border-radius: 8px;
+    border: 2px solid var(--color-border);
 }
