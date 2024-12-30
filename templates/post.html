@@ -19,14 +19,14 @@
         </p>
     </div>
 
+    <hr/>
+
     <div>
       {{ post.content|safe }}
     </div>
 
-    <hr>
-
     <div class="share-links">
-      <strong>Share:</strong>
+      Share:
       <a href="https://x.com/share?url={{ public_url }}&text={{ post.title }}">X</a> |
       <a href="https://linkedin.com/sharing/share-offsite/?url={{ public_url }}">LinkedIn</a>
     </div>

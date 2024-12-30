@@ -416,7 +416,7 @@ def main() -> None:
     render_individual_posts(env, config, all_posts)
 
     # 5. Copy and optimize public assets
-    copy_optimize_assets("public", "output/assets")
+    copy_optimize_assets("public", "output/")
 
     # 6. Copy post media
     copy_post_media(all_posts)

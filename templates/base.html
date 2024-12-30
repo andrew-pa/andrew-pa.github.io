@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{ page_title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page_title }} | {{ config.site_title }}</title>
 
   {% block head_meta %}{% endblock %}
   <meta name="description" content="{{ config.description }}">
-  <link rel="stylesheet" href="/assets/styles.css">
+  <link rel="stylesheet" href="/styles.css">
 
   <script>
     (function(){
@@ -19,19 +20,21 @@
   <header>
     <h1><a href="/">{{ config.site_title }}</a></h1>
     <nav>
-      <a href="/">Home</a> |
-      <a href="/archive.html">Archive</a> |
+      <a href="/">Home</a>
+      <a href="/archive.html">Archive</a>
       <a href="/feed.xml">RSS</a>
     </nav>
-    <hr>
   </header>
+
+    <hr>
 
   <main>
     {% block content %}{% endblock %}
   </main>
 
-  <footer>
     <hr>
+
+  <footer>
     <p>&copy; {{ config.current_date.year }} {{ config.author }}</p>
   </footer>
 </body>
