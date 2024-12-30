@@ -2,17 +2,25 @@
 {% from 'macros.html' import post_item %}
 
 {% block content %}
-  <h2>Archive</h2>
+  <h2>All Posts</h2>
+  <ul>
   {% for year, months_dict in archive_dict.items() %}
+    <li>
     <h3>{{ year }}</h3>
+    <ul>
     {% for month, posts in months_dict.items() %}
+        <li>
       <h4>{{ month }}</h4>
       <ul>
         {% for post in posts %}
             {{ post_item(post) }}
         {% endfor %}
       </ul>
+        </li>
     {% endfor %}
+    </ul>
+    </li>
   {% endfor %}
+  </ul>
 {% endblock %}
 

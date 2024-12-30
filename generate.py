@@ -16,6 +16,7 @@ import os
 import glob
 import shutil
 import datetime
+import calendar
 from typing import Any, Dict, List, Tuple
 
 import yaml
@@ -90,8 +91,8 @@ class BlogPost:
     content: str  # HTML content
     excerpt: str
     slug: str
-    year: str
-    month: str
+    year: int
+    month: int
     media_files: List[str]
 
     @property
@@ -102,7 +103,7 @@ class BlogPost:
     @property
     def post_url(self) -> str:
         """Generate the expected relative URL for the post."""
-        return f"/posts/{self.year}/{self.month}/{self.slug}.html"
+        return f"posts/{self.year}/{self.month}/{self.slug}.html"
 
 
 # ------------------------------------------------------------------------------
@@ -140,14 +141,13 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
 
     for md_file in md_file_paths:
         print(f"Processing post {md_file}")
-        # Example path: posts/2024/12/my-post/post.md
+        # Example path: posts/2024/my-post/post.md
         parts = md_file.split(os.sep)
-        # Assumed structure: year=parts[1], month=parts[2], slug=parts[3]
+        # Assumed structure: year=parts[1], slug=parts[2]
         # Adjust indexes if your folder depth differs.
         try:
-            year = parts[1]
-            month = parts[2]
-            slug = parts[3]
+            year = int(parts[1])
+            slug = parts[2]
         except IndexError:
             continue  # Skip if path structure is unexpected
 
@@ -160,7 +160,9 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
         pub_date_str: str = metadata["pub_date"]
         pub_date: datetime.date = datetime.datetime.fromisoformat(pub_date_str)
         if pub_date.tzinfo is None:
-            pub_date.replace(tzinfo=datetime.datetime.now().tzinfo)
+            print(
+                "Warning: publication date is not complete, missing time zone", pub_date
+            )
 
         # Extract excerpt from the HTML
         excerpt_text = get_excerpt(html_content, max_length=100)
@@ -185,7 +187,7 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
             excerpt=excerpt_text,
             slug=slug,
             year=year,
-            month=month,
+            month=pub_date.month,
             media_files=media_files,
         )
         all_posts.append(post)
@@ -237,7 +239,9 @@ def render_archive_page(
     # Group by year -> month
     archive_dict: Dict[str, Dict[str, List[BlogPost]]] = {}
     for post in all_posts:
-        archive_dict.setdefault(post.year, {}).setdefault(post.month, []).append(post)
+        archive_dict.setdefault(str(post.year), {}).setdefault(
+            calendar.month_name[post.month], []
+        ).append(post)
 
     rendered: str = template.render(
         config=config,
@@ -285,11 +289,18 @@ def render_individual_posts(
     print("Rendering posts")
     template = env.get_template("post.html")
     for post in all_posts:
-        post_output_dir = os.path.join("output", "posts", post.year, post.month)
+        post_output_dir = os.path.join(
+            "output", "posts", str(post.year), str(post.month)
+        )
         os.makedirs(post_output_dir, exist_ok=True)
         output_path = os.path.join(post_output_dir, f"{post.slug}.html")
 
-        rendered: str = template.render(config=config, page_title=post.title, post=post)
+        rendered: str = template.render(
+            config=config,
+            page_title=post.title,
+            post=post,
+            public_url=f"{config['base_url']}{post.post_url}",
+        )
         with open(output_path, "w", encoding="utf-8") as f:
             f.write(rendered)
 
@@ -315,7 +326,6 @@ def generate_rss_feed(config: Dict[str, Any], all_posts: List[BlogPost]) -> None
         fe.title(post.title)
         fe.link(href=f"{config['base_url']}{post.post_url}")
         fe.description(post.excerpt)
-        print(post.pub_date)
         fe.pubDate(post.pub_date)
 
     rss_path = "output/feed.xml"
@@ -371,8 +381,10 @@ def copy_post_media(all_posts: List[BlogPost]) -> None:
     """
     print("Copying post assets")
     for post in all_posts:
-        source_dir = os.path.join("posts", post.year, post.month, post.slug)
-        dest_dir = os.path.join("output", "posts", post.year, post.month, post.slug)
+        source_dir = os.path.join("posts", str(post.year), str(post.month), post.slug)
+        dest_dir = os.path.join(
+            "output", "posts", str(post.year), str(post.month), post.slug
+        )
         os.makedirs(dest_dir, exist_ok=True)
 
         for media_file in post.media_files:
