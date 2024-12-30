@@ -6,9 +6,9 @@
     <a class="tag-link" href="/tags/{{ tag|lower }}.html">{{ tag }}</a>{% if not loop.last %}, {% endif %}
     {% endfor %}
     </p>
-    <p class="excerpt">
-        {{ post.excerpt }}...
-        <a href="/{{ post.post_url }}">Read more</a>
+    <p class="summary">
+        {{ post.summary }}
     </p>
+    <a class="read-more" href="/{{ post.post_url }}">Read more</a>
 </li>
 {%- endmacro %}

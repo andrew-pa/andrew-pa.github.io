@@ -50,20 +50,6 @@ def create_output_dirs() -> None:
     os.makedirs("output/assets", exist_ok=True)
 
 
-def get_excerpt(html_content: str, max_length: int = 150) -> str:
-    """
-    Extract a plain-text excerpt from HTML, limited to `max_length` characters.
-    Naive approach: read until the first "<" or up to `max_length`.
-    """
-    text_content = ""
-    # This is a simplistic approach. You could use a regex or an HTML parser.
-    idx = html_content.find("<")
-    if idx == -1:
-        idx = len(html_content)
-    text_content = html_content[:idx].strip()
-    return text_content[:max_length].strip()
-
-
 def slugify(value: str) -> str:
     """
     Create a URL-friendly slug from a string.
@@ -89,7 +75,7 @@ class BlogPost:
     pub_date: datetime.date
     tags: List[str]
     content: str  # HTML content
-    excerpt: str
+    summary: str
     slug: str
     year: int
     month: int
@@ -164,9 +150,6 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
                 "Warning: publication date is not complete, missing time zone", pub_date
             )
 
-        # Extract excerpt from the HTML
-        excerpt_text = get_excerpt(html_content, max_length=100)
-
         # Collect tags from metadata
         tags: List[str] = metadata.get("tags", [])
 
@@ -184,7 +167,7 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
             pub_date=pub_date,
             tags=tags,
             content=html_content,
-            excerpt=excerpt_text,
+            summary=metadata["summary"],
             slug=slug,
             year=year,
             month=pub_date.month,
@@ -325,7 +308,7 @@ def generate_rss_feed(config: Dict[str, Any], all_posts: List[BlogPost]) -> None
         fe = fg.add_entry()
         fe.title(post.title)
         fe.link(href=f"{config['base_url']}{post.post_url}")
-        fe.description(post.excerpt)
+        fe.description(post.summary)
         fe.pubDate(post.pub_date)
 
     rss_path = "output/feed.xml"
@@ -415,6 +398,7 @@ def main() -> None:
     Main function to orchestrate the static site generation.
     """
     config = load_config("config.yml")
+    print(yaml.dump(config))
 
     # 1. Ensure output directories exist
     create_output_dirs()
