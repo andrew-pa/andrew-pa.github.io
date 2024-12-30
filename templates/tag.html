@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from 'macros.html' import post_item %}
+
+{% block content %}
+  <h2>Posts Tagged: {{ tag }}</h2>
+  <ul class="post-list">
+  {% for post in posts %}
+      {{ post_item(post) }}
+  {% endfor %}
+  </ul>
+{% endblock %}
+

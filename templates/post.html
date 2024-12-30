@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head_meta %}
+  <meta property="og:title" content="{{ post.title }}">
+  <meta property="og:description" content="{{ post.excerpt }}">
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:url" content="{{ og_url }}">
+{% endblock %}
+
+{% block content %}
+  <article>
+    <h2>{{ post.title }}</h2>
+    <p><em>Published on {{ post.pub_date_str }}</em></p>
+    <div>
+      <!-- Full HTML content from Markdown -->
+      {{ post.content|safe }}
+    </div>
+    <p>Tags:
+      {% for tag in post.tags %}
+        <a href="/tags/{{ tag|lower }}.html">{{ tag }}</a>{% if not loop.last %}, {% endif %}
+      {% endfor %}
+    </p>
+    <hr>
+    <div>
+      <!-- Social Sharing Links -->
+      <strong>Share:</strong>
+      <a href="https://x.com/share?url={{ og_url }}&text={{ post.title }}">Twitter</a> |
+      <a href="https://facebook.com/sharer/sharer.php?u={{ og_url }}">Facebook</a> |
+      <a href="https://linkedin.com/sharing/share-offsite/?url={{ og_url }}">LinkedIn</a>
+    </div>
+  </article>
+{% endblock %}
+

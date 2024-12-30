@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ page_title }}</title>
+
+  {% block head_meta %}{% endblock %}
+  <meta name="description" content="{{ config.description }}">
+  <link rel="stylesheet" href="/assets/styles.css">
+
+  <script>
+    (function(){
+      console.log("PostHog analytics snippet would go here.");
+      // e.g., window.posthog.init('YOUR_POSTHOG_KEY', { ... })
+    })();
+  </script>
+</head>
+<body>
+  <header>
+    <h1><a href="/">{{ config.site_title }}</a></h1>
+    <nav>
+      <a href="/">Home</a> |
+      <a href="/archive.html">Archive</a> |
+      <a href="/feed.xml">RSS</a>
+    </nav>
+    <hr>
+  </header>
+
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <hr>
+    <p>&copy; {{ config.current_date.year }} {{ config.author }}</p>
+  </footer>
+</body>
+</html>
+
