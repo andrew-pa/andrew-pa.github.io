@@ -108,6 +108,10 @@ article h1 {
     list-style: none;
 }
 
+.summary {
+    font-size: small;
+}
+
 footer {
     color: var(--color-visited);
 }
