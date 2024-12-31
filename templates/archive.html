@@ -11,7 +11,7 @@
     {% for month, posts in months_dict.items() %}
         <li>
       <h4>{{ month }}</h4>
-      <ul>
+      <ul class="post-list">
         {% for post in posts %}
             {{ post_item(post) }}
         {% endfor %}

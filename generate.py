@@ -13,6 +13,7 @@ Generates a static blog from Markdown files with YAML front matter.
 """
 
 import os
+import sys
 import glob
 import shutil
 import datetime
@@ -37,6 +38,7 @@ def load_config(config_file: str = "config.yml") -> Dict[str, Any]:
     with open(config_file, "r", encoding="utf-8") as f:
         config: Dict[str, Any] = yaml.safe_load(f)
     config["current_date"] = datetime.datetime.now()
+    config["production"] = "--prod" in sys.argv
     return config
 
 
