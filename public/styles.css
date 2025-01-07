@@ -23,15 +23,21 @@ body {
     font-family: serif;
 }
 
-@media screen and (width > 1600px) {
+@media screen and (width < 800px) {
     body {
-        padding: 1rem 16vw;
+        padding: 1rem 4vw;
+    }
+    article {
+        margin: 2rem 0.5rem;
     }
 }
 
-@media screen and (width > 600px) {
+@media screen and (width > 800px) {
     body {
-        padding: 1rem 4vw;
+        padding: 1rem 8vw;
+    }
+    article {
+        margin: 2rem 16vw;
     }
 }
 
@@ -84,13 +90,13 @@ header a:hover {
     text-decoration: underline;
 }
 
-article {
-    margin: 2rem;
-}
-
 article h1 {
     font-size: xx-large;
     margin: 0;
+}
+
+article blockquote {
+    border-left: 4px solid var(--color-border);
 }
 
 .all-tag-list {

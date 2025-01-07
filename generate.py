@@ -128,16 +128,13 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
     md_file_paths = glob.glob(os.path.join(posts_dir, "**", "post.md"), recursive=True)
 
     for md_file in md_file_paths:
-        print(f"Processing post {md_file}")
         # Example path: posts/2024/my-post/post.md
         parts = md_file.split(os.sep)
-        # Assumed structure: year=parts[1], slug=parts[2]
-        # Adjust indexes if your folder depth differs.
         try:
-            year = int(parts[1])
-            slug = parts[2]
+            slug = parts[-2]
         except IndexError:
             continue  # Skip if path structure is unexpected
+        print(f"Processing post {md_file}, slug={slug}")
 
         metadata, md_body = parse_markdown_file(md_file)
 
@@ -160,7 +157,7 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
         media_files: List[str] = [
             f
             for f in os.listdir(post_dir)
-            if os.path.isfile(os.path.join(post_dir, f)) and f != "post.md"
+            if os.path.isfile(os.path.join(post_dir, f)) and f != "post.md" and not f.startswith("_")
         ]
 
         # Create BlogPost object
@@ -171,7 +168,7 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
             content=html_content,
             summary=metadata["summary"],
             slug=slug,
-            year=year,
+            year=pub_date.year,
             month=pub_date.month,
             media_files=media_files,
         )
@@ -211,7 +208,7 @@ def render_home_page(
 
     rendered: str = template.render(
         config=config,
-        page_title=f"{config['site_title']} - Home",
+        page_title="Home",
         posts=recent_posts,
         tags=all_tags,
     )
@@ -237,7 +234,7 @@ def render_archive_page(
 
     rendered: str = template.render(
         config=config,
-        page_title=f"{config['site_title']} - Archive",
+        page_title="Archive",
         archive_dict=archive_dict,
     )
     with open("output/archive.html", "w", encoding="utf-8") as f:
@@ -261,7 +258,7 @@ def render_tag_pages(
 
         rendered: str = template.render(
             config=config,
-            page_title=f"Posts tagged '{tag}'",
+            page_title=tag,
             tag=tag,
             posts=posts_with_tag,
         )
