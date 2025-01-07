@@ -38,6 +38,11 @@
 
   <footer>
     <p>&copy; {{ config.current_date.year }} {{ config.author }}</p>
+    <p>
+      <a href="https://github.com/andrew-pa/andrew-pa.github.io/tree/{{ config.commit_hash }}">
+        {{ config.short_commit_hash }}
+      </a>
+    </p>
   </footer>
 </body>
 </html>

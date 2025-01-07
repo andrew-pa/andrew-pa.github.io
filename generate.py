@@ -18,6 +18,7 @@ import glob
 import shutil
 import datetime
 import calendar
+import subprocess
 from typing import Any, Dict, List, Tuple
 
 import yaml
@@ -26,7 +27,16 @@ from jinja2 import Environment, FileSystemLoader
 from feedgen.feed import FeedGenerator
 from PIL import Image
 
-# ------------------------------------------------------------------------------
+def get_commit_hash() -> Tuple[str, str]:
+    """
+    Get the current commit hash (full and short) from the git repository.
+    """
+    try:
+        full_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
+        short_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip().decode("utf-8")
+        return full_hash, short_hash
+    except subprocess.CalledProcessError:
+        return "unknown", "unknown"
 # Configuration & Utility Functions
 # ------------------------------------------------------------------------------
 
@@ -401,6 +411,9 @@ def main() -> None:
     Main function to orchestrate the static site generation.
     """
     config = load_config("config.yml")
+    full_hash, short_hash = get_commit_hash()
+    config["commit_hash"] = full_hash
+    config["short_commit_hash"] = short_hash
     print(yaml.dump(config))
 
     # 1. Ensure output directories exist
