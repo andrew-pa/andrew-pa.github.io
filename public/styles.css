@@ -120,4 +120,9 @@ article blockquote {
 
 footer {
     color: var(--color-visited);
+    display: flex;
+    justify-content: space-between;
+}
+footer a {
+    color: var(--color-visited);
 }

@@ -27,18 +27,28 @@ from jinja2 import Environment, FileSystemLoader
 from feedgen.feed import FeedGenerator
 from PIL import Image
 
+# Configuration & Utility Functions
+# ------------------------------------------------------------------------------
+
+
 def get_commit_hash() -> Tuple[str, str]:
     """
     Get the current commit hash (full and short) from the git repository.
     """
     try:
-        full_hash = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
-        short_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).strip().decode("utf-8")
+        full_hash = (
+            subprocess.check_output(["git", "rev-parse", "HEAD"])
+            .strip()
+            .decode("utf-8")
+        )
+        short_hash = (
+            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
+            .strip()
+            .decode("utf-8")
+        )
         return full_hash, short_hash
     except subprocess.CalledProcessError:
         return "unknown", "unknown"
-# Configuration & Utility Functions
-# ------------------------------------------------------------------------------
 
 
 def load_config(config_file: str = "config.yml") -> Dict[str, Any]:
@@ -49,6 +59,9 @@ def load_config(config_file: str = "config.yml") -> Dict[str, Any]:
         config: Dict[str, Any] = yaml.safe_load(f)
     config["current_date"] = datetime.datetime.now()
     config["production"] = "--prod" in sys.argv
+    full_hash, short_hash = get_commit_hash()
+    config["commit_hash"] = full_hash
+    config["short_commit_hash"] = short_hash
     return config
 
 
@@ -167,7 +180,9 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
         media_files: List[str] = [
             f
             for f in os.listdir(post_dir)
-            if os.path.isfile(os.path.join(post_dir, f)) and f != "post.md" and not f.startswith("_")
+            if os.path.isfile(os.path.join(post_dir, f))
+            and f != "post.md"
+            and not f.startswith("_")
         ]
 
         # Create BlogPost object
@@ -411,9 +426,6 @@ def main() -> None:
     Main function to orchestrate the static site generation.
     """
     config = load_config("config.yml")
-    full_hash, short_hash = get_commit_hash()
-    config["commit_hash"] = full_hash
-    config["short_commit_hash"] = short_hash
     print(yaml.dump(config))
 
     # 1. Ensure output directories exist
