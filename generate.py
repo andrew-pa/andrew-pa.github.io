@@ -162,7 +162,7 @@ def load_all_posts(posts_dir: str = "posts") -> List[BlogPost]:
         metadata, md_body = parse_markdown_file(md_file)
 
         # Convert the Markdown body to HTML
-        html_content = markdown.markdown(md_body, output_format="html")
+        html_content = markdown.markdown(md_body, output_format="html", extensions=["footnotes"])
 
         # Parse publication date from metadata
         pub_date_str: str = metadata["pub_date"]
