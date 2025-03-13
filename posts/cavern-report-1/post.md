@@ -1,6 +1,6 @@
 ---
 title: "Cavern Progress Report #1"
-pub_date: "2025-03-11T12:00:00-08:00"
+pub_date: "2025-03-12T12:00:00-08:00"
 tags: ["programming", "os-dev", "Cavern", "Rust"]
 summary: "Like digging a tunnel for fun, building an OS for fun is mostly a lot of hard work."
 ---
@@ -24,8 +24,8 @@ I worked on my [previous OS project](https://github.com/andrew-pa/k), named `k`,
 
 The Cavern project got its start after I had taken about a six-month break from working on `k`.
 I had become disillusioned with the monolith design and the heaps of spaghetti it had created, seasoned with an unhealthy dose of Rust `async` complexity.[^1]
-At some point, one of my friends was telling me that they were starting an OS project, which got me thinking about it again.
-This caused me to write a [document](https://github.com/andrew-pa/cavern/blob/main/spec/README.md), maybe a manifesto of sorts, that explained how things would be different this time.
+At some point, one of my friends was telling me that they were starting an OS project, which got me thinking about it again and what I might do differently.
+This caused me to write a [document](https://github.com/andrew-pa/cavern/blob/main/spec/README.md), maybe a manifesto of sorts, that explained my vision for architecting a more organized operating system project.
 I was heavily inspired by the sans-IO philosophy, and particularly [this blog post about it](https://www.firezone.dev/blog/sans-io), which introduced the policy/mechanism distinction.
 This document eventually led to some rudimentary design specifications, which my friend helped revise.
 I was starting to feel a lot more optimistic about the project, so I started an implementation, which I have been working on for the last year or so, on and off.
@@ -39,8 +39,8 @@ Additionally, composable, testable components are favored, ideally keeping "poli
 Overall, I'm hoping that this is the "last" OS project, in the sense that I can use Cavern as a springboard to explore lots of systems/low-level programming projects like device drivers, file systems, etc.
 I'll touch on these briefly, though more detailed explanations can be found in the specification.
 
-One of the most important requirements I aim to meet with the design is what I call "hackability", a kind of maintainability where the system retains its fun, extensible nature over time.
-This means things like having good documentation, extensive tests, easy to use debugging environments, and nicely composable components.
+My top architectural goal is what I call "hackability", a kind of maintainability where the system retains its fun, extensible nature over time.
+This means things like having good documentation, extensive tests, easy-to-use debugging environments, and nicely composable components.
 The goal of having a hackable system is really to make sure that continuing to work on this as a fun side project stays fun as time wears on, and to make taking breaks possible without losing too much precious mental context.
 Since it is a big project, both time spent total and the number of breaks taken are expected to be pretty big, so hackability is very important.
 
@@ -73,7 +73,7 @@ AGI has been a huge help in building the kernel (mostly ChatGPT o1 and o3), espe
 Writing unit tests is pretty magical, I'm not very enthusiastic about writing tests even though I think they're important because they tend to be very repetitive.
 However, GPT has no problem cranking out tests against an interface as long as you give it enough context, and then you can massively boost your confidence that the implementation is correct with little effort.
 Another thing GPT is really good at is implementing data structures that are well known, like allocators or collections.
-Doing these by hand tends to be something of a chore, and the process is largely uninteresting.
+Doing these by hand tends to be something of a chore, and the process is largely mechanical rather than creative.
 However, it can be difficult to reuse some of these components because their implementation is heavily dependent on their environment, so using GPT to specialize them into your specific codebase from their platonic ideal is a huge speed boost.
 Obviously these implementations can be hard to verify, but if you also have GPT generate a unit test suite (in an independent context), then you can usually be pretty sure that they're right.
 GPT is not very good yet at building the components that require combining many other parts of the system, it is hard to give it sufficient context and instructions to get something nice, and I usually feel like in the time/language I would use to explain it to GPT, I could code it myself just as well.
@@ -81,7 +81,7 @@ Some ideas are just most quickly expressed in code.
 
 Another thing I am really happy about is the existence of unit tests in the system.
 There are currently 772 unit tests[^2], and they all run independent of the actual kernel or target system which makes them a lot easier to integrate into the development process.
-Having tests often exposes hard to find bugs in core algorithms early, so that they don't crop up when you're debugging something different, which is really nice.
+Having tests often exposes hard-to-find bugs in core algorithms early, so that they don't crop up when you're debugging something different, which is really nice.
 One place this has really come in handy is the [page table implementation](https://github.com/andrew-pa/cavern/blob/main/kernel_core/src/memory/page_table.rs).
 Getting the various algorithms that manipulate page tables correct can be tricky, due to their somewhat awkward, hardware-oriented layout in memory, not to mention the number of places with potential off-by-one indexing errors.
 Nothing is worse than trying to debug something else and finally discovering that its because a page mapping happened incorrectly (which happened more than once in `k`), so using unit tests to really make sure this part of the system was correct has helped a lot.
@@ -95,7 +95,7 @@ This leads to tension between separating out these effects as a mechanism behind
 It would be exceptionally slow to batch up or request all of your memory writes one at a time, and make the code rather cumbersome, so a balanced approach had to be taken.
 I did abstract memory writes when a system call needs to access user space memory as a mechanism.
 This made centralizing the mapping check code much easier, and also made it possible to [unit test system call handlers](https://github.com/andrew-pa/cavern/blob/main/kernel_core/src/process/system_calls.rs#L789) without too many hacks.
-However in most places policy "takes for granted" writing to a pointer as an effect, which could be a place for future improvement as I think this is a bit sloppy.
+However, in most places policy "takes for granted" writing to a pointer as an effect, which could be a place for future improvement as I think this is a bit sloppy.
 
 The kernel component is now "finished", except for features required for driver services like handling interrupts from user space and mapping arbitrary ranges of memory, and support for devices other than QEMU's `virt` board.[^3]
 A lot of the algorithms/data structures (scheduler, allocators) in the kernel are not performance-optimal yet, but it was a trade-off for faster development time.
@@ -115,7 +115,7 @@ After these core system services, it's mostly a matter of implementing the vario
 I'm particularly interested in building a rudimentary network stack[^4], which is of course its own huge project although I could see reusing an existing Rust TCP/IP implementation.
 Once you have networking you can really start doing interesting stuff like load testing or running basic but real-world services, and that's pretty exciting!
 
-Another thing I'm interested in doing (in the far future) is building a user space Linux system call shim, ideally in such a way that you could run OCI containers within a Cavern user space mostly transparently.
+In the far future, one interesting idea I've had is building a user space Linux system call shim, ideally in such a way that you could run OCI containers within a Cavern user space mostly transparently.
 This is also a huge project, but of course it also massively increases the utility of the system.
 ChatGPT claims there are only ~40 different required system calls to get ~60% compatibility, but inevitably only 100% coverage will do, and that's a lot of shim code.
 
