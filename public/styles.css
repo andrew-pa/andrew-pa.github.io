@@ -21,6 +21,7 @@ body {
     color: var(--color-foreground);
     background-color: var(--color-background);
     font-family: serif;
+    font-size: 17px;
 }
 
 @media screen and (width < 800px) {
@@ -97,10 +98,11 @@ article h1.post-title {
 
 article blockquote {
     border-left: 4px solid var(--color-border);
+    padding-left: 0.5rem;
 }
 
 article code {
-    font-size: larger;
+    font-size: large;
 }
 
 .tags {

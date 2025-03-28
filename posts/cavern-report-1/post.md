@@ -2,16 +2,24 @@
 title: "Cavern Progress Report #1"
 pub_date: "2025-03-12T12:00:00-08:00"
 tags: ["programming", "os-dev", "Cavern", "Rust"]
-summary: "Like digging a tunnel for fun, building an OS for fun is mostly a lot of hard work."
+summary: "Like digging a tunnel for fun, building an OS is mostly a lot of hard work."
 ---
+> **Synopsis**:
+>
+> * Started a new microkernel OS called **Cavern**, written in Rust, targeting ARM64 devices
+> * Emphasizing long-term hackability, clean separation of policy/mechanism
+> * Already has ~12k LOC with a working kernel
+> * GPT has been surprisingly helpful for writing tests and "textbook" code
+> * Current focus: building user-space system services
+
 I've always wanted to write an operating system since I was a kid.
 Now that I've gotten a little older, I've been able to fulfill that dream.
-Of course, I've also gained a lot more understanding of what that actually means.
+When I was a kid, of course, I was mostly excited about the design of the graphical shell and other user interface components; now I am wiser and understand that the really exciting parts are the data structures and algorithms that invisibly underpin the entire system.
 Recently I've been working on a new operating system project called [Cavern](https://github.com/andrew-pa/cavern), and I'm really excited about the progress that I've made so far.
 Cavern is a microkernel-inspired operating system written in Rust, targeting the ARM64 (Aarch64) ISA.
 My goal is to build a hobby OS platform where I can experiment with building various operating system components easily, and one where a majority of the effort can last for a long time even if some components come and go.
-The name "Cavern" is inspired by hobby tunneling, something I have occasionally fantasised about doing, although it seems risky enough to keep me from attempting it.
-Like digging a tunnel for fun, building an OS for fun is a lot of largely unrecognized hard work that few can really understand or even comprehend.
+The name "Cavern" is inspired by hobby tunneling, something I have occasionally fantasised about doing, although it seems risky enough to keep me away from the shovel so far.
+Like digging a tunnel, building an OS for fun is a lot of largely unrecognized hard work that few truly really understand (or even comprehend).
 But, it is fulfilling in its own way!
 Learning about operating system internals and the practical experience of actually implementing one is helpful in building your world model about how systems work.
 It is great practice for thinking at multiple levels of abstraction at the same time, which I believe to be a core skill of computer science.
@@ -122,10 +130,8 @@ ChatGPT claims there are only ~40 different required system calls to get ~60% co
 [^4]: [weird but relevant OSDev Wiki humor](https://wiki.osdev.org/What_Order_Should_I_Make_Things_In%3F#Nick_Stacky)
 
 # Conclusion
-Building Cavern has already been an incredibly rewarding journey.
-There's a particular satisfaction in crafting an operating system: like slowly carving out a tunnel by hand, you uncover new insights and hidden surprises at every turn.
+Building Cavern has already been an enjoyable journey for me, and I am exciting to see how things turn out.
+There's a particular satisfaction in crafting an operating system: like slowly carving out a tunnel by hand, you uncover new insights and delighful abstractions at every turn.
 Each new component not only brings the system closer to life but also deepens your understanding of foundations of computing.
-
 Looking ahead, I'm excited about the possibilities Cavern holds as a sandbox where operating systems ideas can freely evolve, grow, and even fail productively.
-The pragmatic yet principled design is something I'm proud of, and I'm eager to see where it leads next.
-The microkernel approach, with its clean separation of policy and mechanism, continues to offer me clarity of thought and implementation efficiency, which was exactly what I hoped for when embarking on this project.
+Stay tuned for the next progress report sometime soon!
